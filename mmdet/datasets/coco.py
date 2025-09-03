@@ -71,7 +71,8 @@ class CocoDataset(BaseDetDataset):
         self.cat_ids = self.coco.get_cat_ids(
             cat_names=self.metainfo['classes'])
         self.cat2label = {cat_id: i for i, cat_id in enumerate(self.cat_ids)}
-        self.order_of_classes = self.coco.load_order_of_classes()
+        if 'train' in self.ann_file:
+            self.order_of_classes = self.coco.load_order_of_classes()
         self.cat_img_map = copy.deepcopy(self.coco.cat_img_map)
 
         img_ids = self.coco.get_img_ids()
@@ -85,14 +86,24 @@ class CocoDataset(BaseDetDataset):
             raw_ann_info = self.coco.load_anns(ann_ids)
             total_ann_ids.extend(ann_ids)
 
-            parsed_data_info = self.parse_data_info({
-                'raw_ann_info':
-                raw_ann_info,
-                'raw_img_info':
-                raw_img_info,
-                'raw_order_of_classes_info':
-                self.order_of_classes
-            })
+            if 'train' in self.ann_file:
+                parsed_data_info = self.parse_data_info({
+                    'raw_ann_info':
+                    raw_ann_info,
+                    'raw_img_info':
+                    raw_img_info,
+                    'raw_order_of_classes_info':
+                    self.order_of_classes
+                })
+            else:
+                parsed_data_info = self.parse_data_info({
+                    'raw_ann_info':
+                    raw_ann_info,
+                    'raw_img_info':
+                    raw_img_info,
+                    'raw_order_of_classes_info':
+                    None
+                })
             data_list.append(parsed_data_info)
         if self.ANN_ID_UNIQUE:
             assert len(set(total_ann_ids)) == len(
@@ -114,15 +125,16 @@ class CocoDataset(BaseDetDataset):
         """
         img_info = raw_data_info['raw_img_info']
         ann_info = raw_data_info['raw_ann_info']
-        order_of_classes_info = raw_data_info['raw_order_of_classes_info']
+        if raw_data_info['raw_order_of_classes_info']:
+            order_of_classes_info = raw_data_info['raw_order_of_classes_info']
         # img_info是一张照片的信息；ann_info是对应目标框的信息
 
         data_info = {}
 
-        data_info['img_order_of_classes'] = []
-        for order_of_class in order_of_classes_info:
-            data_info['img_order_of_classes'].append((self.cat2label[order_of_class[0]], self.cat2label[order_of_class[-1]]))
-
+        if raw_data_info['raw_order_of_classes_info']:
+            data_info['img_order_of_classes'] = []
+            for order_of_class in order_of_classes_info:
+                data_info['img_order_of_classes'].append((self.cat2label[order_of_class[0]], self.cat2label[order_of_class[-1]]))
 
         # TODO: need to change data_prefix['img'] to data_prefix['img_path']
         img_path = osp.join(self.data_prefix['img'], img_info['file_name'])
