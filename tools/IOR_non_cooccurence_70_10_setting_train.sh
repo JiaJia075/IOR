@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-export CUDA_VISIBLE_DEVICES=7
+# export CUDA_VISIBLE_DEVICES=7
 
 coco_dataset_path="./dataset/coco"
 dataset_image_folder_name="train2017"

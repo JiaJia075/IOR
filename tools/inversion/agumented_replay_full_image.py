@@ -390,6 +390,10 @@ def add_generate(anno_file, generate_path, img_path, combine_dataset_img_path, c
             dataset_new['annotations'].append(anootation_info)
 
     # writing results
+    directory = os.path.dirname(combine_dataset_json_path)
+    # Check if the directory exists, and create it if it doesn't
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     fp = open(combine_dataset_json_path, 'w')
     json.dump(dataset_new, fp)
     fp.close()

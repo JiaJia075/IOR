@@ -390,6 +390,10 @@ def add_generate(anno_file, generate_path, img_path, combine_dataset_img_path, c
             dataset_new['annotations'].append(anootation_info)
 
     # writing results
+    directory = os.path.dirname(combine_dataset_json_path)
+    # Check if the directory exists, and create it if it doesn't
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     fp = open(combine_dataset_json_path, 'w')
     json.dump(dataset_new, fp)
     fp.close()
@@ -399,11 +403,10 @@ def add_generate(anno_file, generate_path, img_path, combine_dataset_img_path, c
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--anno_file', default='/data1/home/anzijia/coco/annotations/instances_train2017_sel_last_unrepeated_40_cats_true_order_of_class_with_order_of_classes.json', type=str, help="ori annotation json")
-    parser.add_argument('--sampled_annotation_path', default='diode_gfl_results_all_stastics_bn_loss_ok_each_class_30_freeze_all_bn_iteration_2000_pred/first_40_cats_each_class_30_r_feature_0.1_tv_l1_1.0_tv_l2_0_main_loss_multiplier_10_alpha_img_stats_0_first_bn_coef_0.3_no_random_contrast_no_clamp', type=str, help="sampled annotation json")
-    parser.add_argument('--img_path', default='/data1/home/anzijia/coco/train2017', type=str, help="image path")
-    parser.add_argument('--agumented_dataset_img_path', default='/data1/home/anzijia/coco/train2017_augemented_repaly_no_clamp_unrepeated_each_class_30_no_mixup_gen_5_2_times_40_40_2', type=str, help="agumented replay dataset json image path")
-    parser.add_argument('--agumented_dataset_json_path', default='/data1/home/anzijia/coco/annotations_with_generates/instances_train2017_augemented_repaly_no_clamp_unrepeated_each_class_30_no_mixup_gen_5_2_times_40_40_2.json', type=str, help="agumented replay dataset json path")
-
+    parser.add_argument('--anno_file', default='', type=str, help="ori annotation json")
+    parser.add_argument('--sampled_annotation_path', default='', type=str, help="sampled annotation json")
+    parser.add_argument('--img_path', default='', type=str, help="image path")
+    parser.add_argument('--agumented_dataset_img_path', default='', type=str, help="agumented replay dataset json image path")
+    parser.add_argument('--agumented_dataset_json_path', default='', type=str, help="agumented replay dataset json path")
     args = parser.parse_args()
     add_generate(args.anno_file, args.sampled_annotation_path, args.img_path, args.agumented_dataset_img_path, args.agumented_dataset_json_path)

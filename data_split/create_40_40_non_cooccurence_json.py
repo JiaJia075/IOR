@@ -78,6 +78,6 @@ def sel_cat(anno_file, sel_num):
 
 
 if __name__ == "__main__":
-    anno_file = '/data1/home/anzijia/coco/annotations/instances_train2017.json'
+    anno_file = './dataset/coco/annotations/instances_train2017.json'
     sel_num = 40
     sel_cat(anno_file, sel_num)
